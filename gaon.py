@@ -79,12 +79,12 @@ if chartType == '1':
 
 # Scrape for weekly digital chart.
 if chartType == 'digital':
-    print('Select time span of chart:\n1. Weekly\n2. Monthly\n3. Yearly')
-    timeSpan = input()
+    print('\nSelect time span of chart:\n1. Weekly\n2. Monthly\n3. Yearly')
+    timeSpan = input('Input numbers: ')
     if timeSpan == 'weekly':
         # Scrape weekly digital chart url
         urlDigitalWeekly = 'http://gaonchart.co.kr/main/section/chart/online.gaon?nationGbn=T&serviceGbn=ALL&termGbn=week'
-        responseDigitalWeekly = requests.get(urlDigitalWeek)
+        responseDigitalWeekly = requests.get(urlDigitalWeekly)
         responseDigitalWeekly.raise_for_status()
         soupDigitalWeekly = bs4.BeautifulSoup(responseDigitalWeekly.text, 'lxml')
 
@@ -106,22 +106,27 @@ if chartType == 'digital':
         songAlbum = []
         songPro = []
         songDist = []
+
+        #Asks user number of results to be displayed
+        resultNumbers = input('Number of results: ')
+        
         print('Gaon {} {} Chart ({})'.format(timeSpan, chartType, time))
         # resultFile.write('GAON {}\n'.format(scrape_chart(chartType)[0][0].get_text()))
-        for i in range(len(songTitleScrape)):
-            for name in songTitleScrape:
-                songTitle.append(name.get_text())
-            for name in singerAlbumScrape:
-                songSinger.append(name.get_text().split('|')[0])
-            for name in singerAlbumScrape:
-                songAlbum.append(name.get_text().split('|')[1])
-            for name in songProScrape:
-                songPro.append(name.get_text().split('|')[0])
-            for name in songDistScrape:
-                songDist.append(name.get_text().split('|')[0])
+        
+        for name in songTitleScrape:
+            songTitle.append(name.get_text())
+        for name in singerAlbumScrape:
+            songSinger.append(name.get_text().split('|')[0])
+        for name in singerAlbumScrape:
+            songAlbum.append(name.get_text().split('|')[1])
+        for name in songProScrape:
+            songPro.append(name.get_text().split('|')[0])
+        for name in songDistScrape:
+            songDist.append(name.get_text().split('|')[0])
             
+        for i in range(int(resultNumbers)):
             # print(str(i+1) + '. ' + songTitle[i] + ' - ' + songSinger[i])
-            print('{}. {} - {}'.format(i+1, songTitle[i], songSinger[i]))
+            print('{}. {} - {} - {} - {} - {}'.format(i+1, songTitle[i], songSinger[i], songAlbum[i], songPro[i], songDist[i]))
             # resultFile.write('{}. {} - {}\n'.format(i+1, songTitle[i], songSinger[i]))
         print('\n')
 
