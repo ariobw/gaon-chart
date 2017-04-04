@@ -109,10 +109,10 @@ if chartType == 'digital':
 
         #Asks user number of results to be displayed
         resultNumbers = input('Number of results: ')
-        
+
         print('Gaon {} {} Chart ({})'.format(timeSpan, chartType, time))
         # resultFile.write('GAON {}\n'.format(scrape_chart(chartType)[0][0].get_text()))
-        
+
         for name in songTitleScrape:
             songTitle.append(name.get_text())
         for name in singerAlbumScrape:
@@ -123,11 +123,12 @@ if chartType == 'digital':
             songPro.append(name.get_text().split('|')[0])
         for name in songDistScrape:
             songDist.append(name.get_text().split('|')[0])
-            
+
         for i in range(int(resultNumbers)):
             # print(str(i+1) + '. ' + songTitle[i] + ' - ' + songSinger[i])
             print('{}. {} - {} - {} - {} - {}'.format(i+1, songTitle[i], songSinger[i], songAlbum[i], songPro[i], songDist[i]))
             # resultFile.write('{}. {} - {}\n'.format(i+1, songTitle[i], songSinger[i]))
         print('\n')
+        print('asdf')
 
 resultFile.close()
