@@ -2,6 +2,9 @@
 *.txt
 *.h
 
+# except requirements.txt
+!requirements.txt
+
 # ignore folder
 /Lib
 /Scripts

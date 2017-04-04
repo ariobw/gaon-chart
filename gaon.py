@@ -19,6 +19,56 @@ def scrape_chart(chartType):
     chartSingerElement = soup.select('.main{} .singer'.format(chartType))
     return chartTitle, chartSongElement, chartSingerElement
 
+def scrape_chart_digital(timeSpan):
+    # Scrape digital chart url
+    responseDigital = requests.get(urlDigital)
+    try:
+        responseDigital.raise_for_status()
+    except HTTPError:
+        print('An HTTP Error occurred.')
+    soupDigital = bs4.BeautifulSoup(responseDigital.text, 'lxml')
+    
+    # Scrape chart current time
+    time = soupDigital.select('option')[1].get_text()
+    
+    # Scrape chart content
+    # subject = soupDigital.select('.subject')
+    # songTitle = soupDigital.select_one('.subject p')
+    dataScrape = soupDigital.select('td p')
+    songTitleScrape = dataScrape[::4]
+    singerAlbumScrape = dataScrape[1::4]
+    songProScrape = dataScrape[2::4]
+    songDistScrape = dataScrape[3::4]
+    
+    #Asks user number of results to be displayed
+    resultNumbers = input('Number of results: ')
+    
+    # Print chart on display
+    songTitle = []
+    songSinger = []
+    songAlbum = []
+    songPro = []
+    songDist = []
+    
+    print('Gaon {} {} Chart ({})'.format(timeSpan, chartType, time))
+    # resultFile.write('GAON {}\n'.format(scrape_chart(chartType)[0][0].get_text()))
+
+    for name in songTitleScrape:
+        songTitle.append(name.get_text())
+    for name in singerAlbumScrape:
+        songSinger.append(name.get_text().split('|')[0])
+    for name in singerAlbumScrape:
+        songAlbum.append(name.get_text().split('|')[1])
+    for name in songProScrape:
+        songPro.append(name.get_text().split('|')[0])
+    for name in songDistScrape:
+        songDist.append(name.get_text().split('|')[0])
+
+    for i in range(int(resultNumbers)):
+        # print(str(i+1) + '. ' + songTitle[i] + ' - ' + songSinger[i])
+        print('{}. {} - {} - {} - {} - {}'.format(i+1, songTitle[i], songSinger[i], songAlbum[i], songPro[i], songDist[i]))
+        # resultFile.write('{}. {} - {}\n'.format(i+1, songTitle[i], songSinger[i]))
+    print('\n')
 
 # Function to print and write into file the overview chart in a readable format.
 def print_chart_all(chartType):
@@ -78,57 +128,23 @@ if chartType == '1':
 
 
 # Scrape for weekly digital chart.
-if chartType == 'digital':
+if chartType == '2':
+    chartType = 'Digital'
     print('\nSelect time span of chart:\n1. Weekly\n2. Monthly\n3. Yearly')
     timeSpan = input('Input numbers: ')
-    if timeSpan == 'weekly':
-        # Scrape weekly digital chart url
-        urlDigitalWeekly = 'http://gaonchart.co.kr/main/section/chart/online.gaon?nationGbn=T&serviceGbn=ALL&termGbn=week'
-        responseDigitalWeekly = requests.get(urlDigitalWeekly)
-        responseDigitalWeekly.raise_for_status()
-        soupDigitalWeekly = bs4.BeautifulSoup(responseDigitalWeekly.text, 'lxml')
-
-        # Scrape time span
-        time = soupDigitalWeekly.select('option')[1].get_text()
-
-        # Scrape chart content
-        # subject = soupDigitalWeekly.select('.subject')
-        # songTitle = soupDigitalWEekly.select_one('.subject p')
-        dataScrape = soupDigitalWeekly.select('td p')
-        songTitleScrape = dataScrape[::4]
-        singerAlbumScrape = dataScrape[1::4]
-        songProScrape = dataScrape[2::4]
-        songDistScrape = dataScrape[3::4]
-
-        # Print chart on display
-        songTitle = []
-        songSinger = []
-        songAlbum = []
-        songPro = []
-        songDist = []
-
-        #Asks user number of results to be displayed
-        resultNumbers = input('Number of results: ')
-
-        print('Gaon {} {} Chart ({})'.format(timeSpan, chartType, time))
-        # resultFile.write('GAON {}\n'.format(scrape_chart(chartType)[0][0].get_text()))
-
-        for name in songTitleScrape:
-            songTitle.append(name.get_text())
-        for name in singerAlbumScrape:
-            songSinger.append(name.get_text().split('|')[0])
-        for name in singerAlbumScrape:
-            songAlbum.append(name.get_text().split('|')[1])
-        for name in songProScrape:
-            songPro.append(name.get_text().split('|')[0])
-        for name in songDistScrape:
-            songDist.append(name.get_text().split('|')[0])
-
-        for i in range(int(resultNumbers)):
-            # print(str(i+1) + '. ' + songTitle[i] + ' - ' + songSinger[i])
-            print('{}. {} - {} - {} - {} - {}'.format(i+1, songTitle[i], songSinger[i], songAlbum[i], songPro[i], songDist[i]))
-            # resultFile.write('{}. {} - {}\n'.format(i+1, songTitle[i], songSinger[i]))
-        print('\n')
-        print('asdf')
-
+    
+    if timeSpan == '1':
+        timeSpan = 'Weekly'
+        urlDigital = 'http://gaonchart.co.kr/main/section/chart/online.gaon?nationGbn=T&serviceGbn=ALL&termGbn=week'
+        scrape_chart_digital(timeSpan)
+    elif timeSpan == '2':
+        timeSpan = 'Monthly'
+        urlDigital = 'http://gaonchart.co.kr/main/section/chart/online.gaon?nationGbn=T&serviceGbn=ALL&termGbn=month'
+        scrape_chart_digital(timeSpan)
+    elif timeSpan == '3':
+        timeSpan = 'Yearly'
+        urlDigital = 'http://gaonchart.co.kr/main/section/chart/online.gaon?nationGbn=T&serviceGbn=ALL&termGbn=year'
+        scrape_chart_digital(timeSpan)
+    
+    
 resultFile.close()
